@@ -405,3 +405,143 @@ function ProductDialog({
     </div>
   );
 }
+
+function MediaManager() {
+  const qc = useQueryClient();
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const { data: media } = useQuery({
+    queryKey: ["admin", "site_media"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_media")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data as MediaRow[];
+    },
+  });
+
+  async function onFiles(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    try {
+      for (const file of Array.from(files)) {
+        const url = await uploadMedia(file, "site");
+        const { error } = await supabase.from("site_media").insert({
+          kind: isVideoFile(file) ? "video" : "image",
+          url,
+          title: file.name.replace(/\.[^.]+$/, ""),
+          sort_order: (media?.length ?? 0) + 1,
+        });
+        if (error) throw error;
+      }
+      toast.success("Media added");
+      qc.invalidateQueries({ queryKey: ["admin", "site_media"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  async function patch(id: string, values: Partial<MediaRow>) {
+    const { error } = await supabase.from("site_media").update(values).eq("id", id);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["admin", "site_media"] });
+  }
+
+  async function remove(id: string) {
+    if (!confirm("Remove this media from the site?")) return;
+    const { error } = await supabase.from("site_media").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Removed");
+    qc.invalidateQueries({ queryKey: ["admin", "site_media"] });
+  }
+
+  return (
+    <section className="mt-12">
+      <div className="flex flex-wrap items-end justify-between gap-3 mb-4">
+        <div>
+          <h2 className="font-display text-2xl flex items-center gap-2">
+            <ImageIcon size={20} /> Homepage media
+          </h2>
+          <p className="text-sm text-[var(--muted-foreground)] mt-1">
+            Upload photos and videos — they rotate in the header banner and fill the gallery.
+          </p>
+        </div>
+        <label className="btn-primary text-sm cursor-pointer">
+          <Upload size={16} /> {uploading ? "Uploading…" : "Upload photo / video"}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            className="hidden"
+            onChange={(e) => onFiles(e.target.files)}
+          />
+        </label>
+      </div>
+
+      {media && media.length > 0 ? (
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
+          {media.map((m) => (
+            <div key={m.id} className="card-soft overflow-hidden">
+              <div className="aspect-square bg-[var(--muted)]">
+                {m.kind === "video" ? (
+                  <video src={m.url} muted loop playsInline autoPlay className="w-full h-full object-cover" />
+                ) : (
+                  <img src={m.url} alt={m.title ?? ""} className="w-full h-full object-cover" />
+                )}
+              </div>
+              <div className="p-3 flex flex-col gap-2">
+                <input
+                  defaultValue={m.title ?? ""}
+                  placeholder="Title"
+                  onBlur={(e) => patch(m.id, { title: e.target.value || null })}
+                  className="input-field !py-1.5 !px-2 text-sm"
+                />
+                <input
+                  defaultValue={m.subtitle ?? ""}
+                  placeholder="Caption"
+                  onBlur={(e) => patch(m.id, { subtitle: e.target.value || null })}
+                  className="input-field !py-1.5 !px-2 text-sm"
+                />
+                <div className="flex items-center justify-between gap-2">
+                  <label className="text-xs flex items-center gap-1.5">
+                    <input
+                      type="checkbox"
+                      checked={m.active}
+                      onChange={(e) => patch(m.id, { active: e.target.checked })}
+                    />
+                    Visible
+                  </label>
+                  <input
+                    type="number"
+                    defaultValue={m.sort_order}
+                    onBlur={(e) => patch(m.id, { sort_order: Number(e.target.value) })}
+                    className="input-field !py-1 !px-2 text-xs w-16"
+                    aria-label="Order"
+                  />
+                  <button
+                    onClick={() => remove(m.id)}
+                    className="btn-ghost !p-1.5 text-[var(--destructive)]"
+                    aria-label="Delete media"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="card-soft p-10 text-center text-[var(--muted-foreground)]">
+          No media yet — upload your macaron video or a photo to bring the header to life.
+        </div>
+      )}
+    </section>
+  );
+}
