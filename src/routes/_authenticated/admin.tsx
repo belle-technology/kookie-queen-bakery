@@ -325,18 +325,57 @@ function ProductDialog({
             </div>
           </div>
           <div>
-            <label className="text-sm font-semibold">Image URL</label>
+            <label className="text-sm font-semibold">Photo</label>
+            <div className="mt-1 flex items-center gap-3">
+              {form.image_url && (
+                <img src={form.image_url} alt="" className="w-16 h-16 rounded-lg object-cover" />
+              )}
+              <label className="btn-ghost text-sm cursor-pointer border border-[var(--border)]">
+                <Upload size={14} /> {uploading === "image" ? "Uploading…" : "Upload photo"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleFile("image_url", e.target.files?.[0])}
+                />
+              </label>
+              {form.image_url && (
+                <button type="button" onClick={() => setForm({ ...form, image_url: "" })} className="btn-ghost text-sm">
+                  Remove
+                </button>
+              )}
+            </div>
             <input
               type="url"
-              placeholder="https://…"
+              placeholder="…or paste an image link"
               value={form.image_url}
               onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-              className="input-field mt-1"
+              className="input-field mt-2"
             />
+          </div>
+          <div>
+            <label className="text-sm font-semibold">Video (optional)</label>
+            <div className="mt-1 flex items-center gap-3">
+              <label className="btn-ghost text-sm cursor-pointer border border-[var(--border)]">
+                <Film size={14} /> {uploading === "video" ? "Uploading…" : "Upload video"}
+                <input
+                  type="file"
+                  accept="video/*"
+                  className="hidden"
+                  onChange={(e) => handleFile("video_url", e.target.files?.[0])}
+                />
+              </label>
+              {form.video_url && (
+                <button type="button" onClick={() => setForm({ ...form, video_url: "" })} className="btn-ghost text-sm">
+                  Remove
+                </button>
+              )}
+            </div>
             <p className="text-xs text-[var(--muted-foreground)] mt-1">
-              Paste a link to your image (Imgur, Cloudinary, etc.)
+              Shown on the product page — the photo swaps to the video automatically.
             </p>
           </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-sm font-semibold">Stock left</label>
