@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCard, type ProductCardData } from "@/components/site/ProductCard";
-import heroImage from "@/assets/hero-bakes.jpg";
+import { HeroShowcase, MediaGallery } from "@/components/site/HeroShowcase";
+import { ReviewWall } from "@/components/site/ReviewWall";
+
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -44,16 +46,8 @@ function Home() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-[var(--ink)] text-[var(--cream)]">
-        <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt=""
-            width={1600}
-            height={1000}
-            className="w-full h-full object-cover opacity-70"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--ink)] via-[var(--ink)]/70 to-transparent" />
-        </div>
+        <HeroShowcase />
+
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28">
           <span className="chip bg-[var(--accent)] text-[var(--accent-foreground)]">
             Freshly baked
@@ -98,13 +92,20 @@ function Home() {
             <div className="text-5xl mb-4">🧁</div>
             <h3 className="font-display text-2xl">The oven is warming up</h3>
             <p className="mt-2 text-[var(--muted-foreground)] max-w-md mx-auto">
-              No treats yet — sign in as the owner to add your first cookie or cake.
+              Fresh treats are on the way — check back very soon.
             </p>
           </div>
         )}
       </section>
 
+      {/* Gallery of uploaded photos & videos */}
+      <MediaGallery />
+
+      {/* Customer reviews */}
+      <ReviewWall />
+
       {/* Story */}
+
       <section id="story" className="bg-[var(--secondary)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 grid gap-12 md:grid-cols-2 items-center">
           <div>

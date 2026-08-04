@@ -1,10 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Pencil, Trash2, Plus, LogOut, ShoppingBag } from "lucide-react";
+import { Pencil, Trash2, Plus, LogOut, ShoppingBag, Upload, Film, Image as ImageIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/lib/cart-store";
+import { uploadMedia, isVideoFile } from "@/lib/media-upload";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
@@ -17,9 +18,21 @@ type ProductRow = {
   price_cents: number;
   currency: string;
   image_url: string | null;
+  video_url: string | null;
   stock: number;
   status: "active" | "sold_out" | "draft";
   category: string | null;
+};
+
+type MediaRow = {
+  id: string;
+  kind: string;
+  url: string;
+  poster_url: string | null;
+  title: string | null;
+  subtitle: string | null;
+  sort_order: number;
+  active: boolean;
 };
 
 type OrderRow = {
@@ -31,6 +44,7 @@ type OrderRow = {
   status: string;
   created_at: string;
 };
+
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -181,7 +195,11 @@ function AdminPage() {
         </div>
       </section>
 
+      {/* Media library */}
+      <MediaManager />
+
       {/* Orders */}
+
       <section className="mt-12">
         <h2 className="font-display text-2xl mb-4 flex items-center gap-2">
           <ShoppingBag size={20} /> Recent orders
@@ -233,11 +251,27 @@ function ProductDialog({
     price: product ? (product.price_cents / 100).toFixed(2) : "",
     currency: product?.currency ?? "USD",
     image_url: product?.image_url ?? "",
+    video_url: product?.video_url ?? "",
     stock: product?.stock ?? 0,
     status: product?.status ?? "active",
     category: product?.category ?? "",
   });
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState<"image" | "video" | null>(null);
+
+  async function handleFile(field: "image_url" | "video_url", file?: File | null) {
+    if (!file) return;
+    setUploading(field === "image_url" ? "image" : "video");
+    try {
+      const url = await uploadMedia(file, "products");
+      setForm((f) => ({ ...f, [field]: url }));
+      toast.success("Uploaded");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(null);
+    }
+  }
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
@@ -248,10 +282,12 @@ function ProductDialog({
       price_cents: Math.round(parseFloat(form.price || "0") * 100),
       currency: form.currency.trim().toUpperCase() || "USD",
       image_url: form.image_url.trim() || null,
+      video_url: form.video_url.trim() || null,
       stock: Number(form.stock),
       status: form.status,
       category: form.category.trim() || null,
     };
+
     const { error } = isNew
       ? await supabase.from("products").insert(payload)
       : await supabase.from("products").update(payload).eq("id", product!.id);
