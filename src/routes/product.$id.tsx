@@ -86,13 +86,32 @@ function ProductDetail() {
       </Link>
 
       <div className="grid gap-10 md:grid-cols-2">
-        <div className="card-soft overflow-hidden aspect-square bg-[var(--muted)]">
-          {product.image_url ? (
-            <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-8xl">🍰</div>
+        <div className="flex flex-col gap-4">
+          <div className="card-soft overflow-hidden aspect-square bg-[var(--muted)]">
+            {product.video_url ? (
+              <video
+                src={product.video_url}
+                poster={product.image_url ?? undefined}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                className="w-full h-full object-cover"
+              />
+            ) : product.image_url ? (
+              <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-8xl">🍰</div>
+            )}
+          </div>
+          {product.video_url && product.image_url && (
+            <div className="card-soft overflow-hidden aspect-[16/9]">
+              <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+            </div>
           )}
         </div>
+
 
         <div className="flex flex-col">
           {soldOut && (
