@@ -14,7 +14,10 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { useCart } from "@/lib/cart-store";
+import { useAdmin } from "@/hooks/use-admin";
 import { supabase } from "@/integrations/supabase/client";
+import logo from "@/assets/kookie-queen-logo.png";
+
 
 function NotFoundComponent() {
   return (
@@ -81,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -112,13 +115,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function Header() {
   const count = useCart((s) => s.items.reduce((n, i) => n + i.quantity, 0));
+  const { isAdmin } = useAdmin();
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-[var(--background)]/85 border-b border-[var(--border)]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
-        <Link to="/" className="group flex items-center gap-2">
-          <span className="w-9 h-9 rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] font-display font-bold text-lg flex items-center justify-center">
-            K
-          </span>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+        <Link to="/" className="group flex items-center gap-3">
+          <img
+            src={logo}
+            alt="Kookie Queen logo"
+            width={48}
+            height={48}
+            className="w-11 h-11 rounded-full ring-1 ring-[var(--gold)] object-cover"
+          />
           <span className="font-display text-xl sm:text-2xl font-bold tracking-tight">
             Kookie <span className="text-[var(--accent)]">Queen</span>
           </span>
@@ -127,9 +135,11 @@ function Header() {
           <Link to="/" className="btn-ghost text-sm">
             Shop
           </Link>
-          <Link to="/auth" className="btn-ghost text-sm hidden sm:inline-flex">
-            Admin
-          </Link>
+          {isAdmin && (
+            <Link to="/admin" className="btn-ghost text-sm hidden sm:inline-flex">
+              Admin
+            </Link>
+          )}
           <Link
             to="/cart"
             className="relative inline-flex items-center gap-2 btn-dark text-sm"
@@ -148,6 +158,7 @@ function Header() {
     </header>
   );
 }
+
 
 function Footer() {
   return (
@@ -171,9 +182,11 @@ function Footer() {
         <div>
           <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-3">Kitchen</div>
           <div className="flex flex-col gap-2 text-sm">
-            <Link to="/auth" className="hover:text-[var(--accent)]">Owner sign in</Link>
+            <a href="/#reviews" className="hover:text-[var(--accent)]">Customer reviews</a>
+            <a href="/#story" className="hover:text-[var(--accent)]">Our story</a>
           </div>
         </div>
+
       </div>
       <div className="border-t border-white/10 py-4 text-center text-xs text-[var(--cream)]/50">
         © {new Date().getFullYear()} Kookie Queen. All rights reserved.

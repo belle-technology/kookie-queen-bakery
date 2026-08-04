@@ -32,47 +32,51 @@
   --color-ring: var(--ring);
   --color-ink: var(--ink);
   --color-cream: var(--cream);
+  --color-gold: var(--gold);
 
   --font-display: "Playfair Display", Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.9rem;
 
-  /* Brand palette: green, white, pink, black */
-  --background: oklch(0.995 0.005 90);       /* warm off-white */
-  --foreground: oklch(0.18 0.02 150);        /* near-black w/ green cast */
-  --ink: oklch(0.14 0.01 150);               /* deep black */
-  --cream: oklch(0.97 0.02 90);              /* cream */
+  /* Luxury brand palette drawn from the Kookie Queen crest:
+     cream, chocolate, rose pink, gold — with a deep emerald anchor */
+  --background: oklch(0.985 0.014 80);       /* soft cream */
+  --foreground: oklch(0.26 0.045 45);        /* chocolate */
+  --ink: oklch(0.19 0.03 40);                /* deep cocoa black */
+  --cream: oklch(0.965 0.025 78);            /* cream */
+  --gold: oklch(0.79 0.13 82);               /* gilded gold */
 
-  --card: oklch(1 0 0);
+  --card: oklch(0.995 0.008 80);
   --card-foreground: var(--foreground);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.995 0.008 80);
   --popover-foreground: var(--foreground);
 
-  --primary: oklch(0.42 0.09 152);           /* forest green */
-  --primary-foreground: oklch(0.98 0.01 90);
+  --primary: oklch(0.38 0.075 155);          /* deep emerald */
+  --primary-foreground: oklch(0.97 0.02 80);
 
-  --secondary: oklch(0.88 0.07 355);         /* soft pink */
-  --secondary-foreground: oklch(0.22 0.03 355);
+  --secondary: oklch(0.9 0.055 15);          /* blush pink */
+  --secondary-foreground: oklch(0.26 0.05 30);
 
-  --accent: oklch(0.82 0.12 355);            /* vivid pink accent */
-  --accent-foreground: oklch(0.14 0.01 150);
+  --accent: oklch(0.79 0.11 12);             /* rose pink accent */
+  --accent-foreground: oklch(0.19 0.03 40);
 
-  --muted: oklch(0.96 0.01 90);
-  --muted-foreground: oklch(0.45 0.02 150);
+  --muted: oklch(0.955 0.018 78);
+  --muted-foreground: oklch(0.47 0.03 45);
 
   --destructive: oklch(0.55 0.22 27);
-  --destructive-foreground: oklch(0.98 0.01 90);
+  --destructive-foreground: oklch(0.98 0.01 80);
 
-  --border: oklch(0.9 0.01 90);
-  --input: oklch(0.9 0.01 90);
-  --ring: oklch(0.42 0.09 152);
+  --border: oklch(0.9 0.02 70);
+  --input: oklch(0.9 0.02 70);
+  --ring: oklch(0.79 0.13 82);
 
-  --shadow-card: 0 10px 30px -12px oklch(0.14 0.01 150 / 0.15);
-  --shadow-btn: 0 6px 20px -8px oklch(0.42 0.09 152 / 0.5);
+  --shadow-card: 0 18px 44px -22px oklch(0.19 0.03 40 / 0.28);
+  --shadow-btn: 0 10px 26px -12px oklch(0.38 0.075 155 / 0.55);
 }
+
 
 @layer base {
   * {
@@ -179,3 +183,9 @@
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
+
+@utility gold-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+

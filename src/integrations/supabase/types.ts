@@ -108,6 +108,7 @@ export type Database = {
           status: Database["public"]["Enums"]["product_status"]
           stock: number
           updated_at: string
+          video_url: string | null
         }
         Insert: {
           category?: string | null
@@ -121,6 +122,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["product_status"]
           stock?: number
           updated_at?: string
+          video_url?: string | null
         }
         Update: {
           category?: string | null
@@ -134,6 +136,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["product_status"]
           stock?: number
           updated_at?: string
+          video_url?: string | null
         }
         Relationships: []
       }
@@ -192,6 +195,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      site_media: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          kind: string
+          poster_url: string | null
+          sort_order: number
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          kind?: string
+          poster_url?: string | null
+          sort_order?: number
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          kind?: string
+          poster_url?: string | null
+          sort_order?: number
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
