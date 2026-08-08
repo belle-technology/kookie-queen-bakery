@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import heroImage from "@/assets/hero-bakes.jpg";
+
 
 export type SiteMedia = {
   id: string;
