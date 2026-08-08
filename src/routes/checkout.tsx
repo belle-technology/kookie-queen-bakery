@@ -76,17 +76,24 @@ function Checkout() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <p className="text-[var(--muted-foreground)]">Your cart is empty.</p>
-        <Link to="/" className="btn-primary mt-6 inline-flex">Browse treats</Link>
+        <Link to="/" className="btn-primary mt-6 inline-flex">Browse cookies</Link>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-      <h1 className="font-display text-4xl">Checkout</h1>
-      <p className="text-[var(--muted-foreground)] mt-2">Almost there — just your details.</p>
+      <h1 className="font-display text-4xl">Pre-order checkout</h1>
+      <p className="text-[var(--muted-foreground)] mt-2">
+        Pre-orders run Saturday to Wednesday — every order is delivered on Sunday.
+      </p>
+
+      <div className="mt-6">
+        <PreorderBanner />
+      </div>
 
       <div className="mt-10 grid gap-10 md:grid-cols-[1fr_320px]">
+
         <form onSubmit={handleSubmit} className="card-soft p-6 flex flex-col gap-4">
           <div>
             <label className="text-sm font-semibold">Full name *</label>
