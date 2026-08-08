@@ -3,6 +3,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cartTotals, formatMoney, useCart } from "@/lib/cart-store";
+import { preorderStatus } from "@/lib/preorder";
+import { PreorderBanner } from "@/components/site/PreorderBanner";
 
 export const Route = createFileRoute("/checkout")({
   component: Checkout,
@@ -21,10 +23,15 @@ function Checkout() {
     notes: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const { open: preorderOpen, reopensLabel } = preorderStatus();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (items.length === 0) return;
+    if (!preorderOpen) {
+      toast.error(`Pre-orders are closed — the form reopens ${reopensLabel}.`);
+      return;
+    }
     setSubmitting(true);
 
     const { data: order, error } = await supabase
@@ -69,17 +76,24 @@ function Checkout() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <p className="text-[var(--muted-foreground)]">Your cart is empty.</p>
-        <Link to="/" className="btn-primary mt-6 inline-flex">Browse treats</Link>
+        <Link to="/" className="btn-primary mt-6 inline-flex">Browse cookies</Link>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-      <h1 className="font-display text-4xl">Checkout</h1>
-      <p className="text-[var(--muted-foreground)] mt-2">Almost there — just your details.</p>
+      <h1 className="font-display text-4xl">Pre-order checkout</h1>
+      <p className="text-[var(--muted-foreground)] mt-2">
+        Pre-orders run Saturday to Wednesday — every order is delivered on Sunday.
+      </p>
+
+      <div className="mt-6">
+        <PreorderBanner />
+      </div>
 
       <div className="mt-10 grid gap-10 md:grid-cols-[1fr_320px]">
+
         <form onSubmit={handleSubmit} className="card-soft p-6 flex flex-col gap-4">
           <div>
             <label className="text-sm font-semibold">Full name *</label>
@@ -116,12 +130,19 @@ function Checkout() {
               Transfer {formatMoney(subtotalCents, currency)} and use your name as the reference, then place your order below.
             </p>
           </div>
-          <button disabled={submitting} className="btn-primary mt-2">
-            {submitting ? "Placing order…" : `Place order · ${formatMoney(subtotalCents, currency)}`}
+          <button disabled={submitting || !preorderOpen} className="btn-primary mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            {!preorderOpen
+              ? "Pre-orders closed"
+              : submitting
+                ? "Placing pre-order…"
+                : `Place pre-order · ${formatMoney(subtotalCents, currency)}`}
           </button>
           <p className="text-xs text-[var(--muted-foreground)] text-center">
-            We'll confirm your payment and get baking.
+            {preorderOpen
+              ? "We'll confirm your payment and bake for Sunday delivery."
+              : `The order form reopens ${reopensLabel}. Your cart is saved.`}
           </p>
+
         </form>
 
         <aside className="card-soft p-6 h-fit">

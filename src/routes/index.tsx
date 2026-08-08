@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProductCard, type ProductCardData } from "@/components/site/ProductCard";
 import { HeroShowcase, MediaGallery } from "@/components/site/HeroShowcase";
 import { ReviewWall } from "@/components/site/ReviewWall";
+import { PreorderBanner } from "@/components/site/PreorderBanner";
 
 
 export const Route = createFileRoute("/")({
@@ -67,17 +68,17 @@ function Home() {
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28">
           <span className="chip bg-[var(--accent)] text-[var(--accent-foreground)]">
-            Freshly baked
+            Pre-order only · Sunday delivery
           </span>
           <h1 className="mt-4 font-display text-5xl sm:text-6xl md:text-7xl leading-[1.05] max-w-2xl">
             Cookies, made<br />
             <span className="text-[var(--accent)]">the queen's way.</span>
           </h1>
           <p className="mt-5 max-w-md text-[var(--cream)]/80 text-lg">
-            Small-batch cookies, handmade with real butter and a whole lot of love. Order today — we bake tomorrow.
+            Small-batch cookies, handmade with real butter and a whole lot of love. Pre-orders run Saturday to Wednesday — every order is delivered on Sunday.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#shop" className="btn-pink">Shop the treats</a>
+            <a href="#shop" className="btn-pink">Shop the cookies</a>
             <a href="#story" className="btn-ghost text-[var(--cream)]">Our story →</a>
           </div>
         </div>
@@ -85,12 +86,14 @@ function Home() {
 
       {/* Products */}
       <section id="shop" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-        <div className="flex items-end justify-between gap-4 mb-8">
+        <PreorderBanner />
+        <div className="flex items-end justify-between gap-4 mb-8 mt-8">
           <div>
             <span className="chip bg-[var(--secondary)] text-[var(--secondary-foreground)]">This week's menu</span>
-            <h2 className="mt-3 font-display text-3xl sm:text-4xl">The treat case</h2>
+            <h2 className="mt-3 font-display text-3xl sm:text-4xl">The cookie case</h2>
           </div>
         </div>
+
 
         {isLoading ? (
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">

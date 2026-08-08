@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import heroImage from "@/assets/hero-bakes.jpg";
+
 
 export type SiteMedia = {
   id: string;
@@ -35,13 +35,7 @@ export function HeroShowcase() {
   return (
     <div className="absolute inset-0">
       {slides.length === 0 ? (
-        <img
-          src={heroImage}
-          alt=""
-          width={1600}
-          height={1000}
-          className="w-full h-full object-cover opacity-70"
-        />
+        <div className="w-full h-full bg-[var(--ink)]" />
       ) : (
         slides.map((s, i) => (
           <div
