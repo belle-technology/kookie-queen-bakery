@@ -123,12 +123,19 @@ function Checkout() {
               Transfer {formatMoney(subtotalCents, currency)} and use your name as the reference, then place your order below.
             </p>
           </div>
-          <button disabled={submitting} className="btn-primary mt-2">
-            {submitting ? "Placing order…" : `Place order · ${formatMoney(subtotalCents, currency)}`}
+          <button disabled={submitting || !preorderOpen} className="btn-primary mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            {!preorderOpen
+              ? "Pre-orders closed"
+              : submitting
+                ? "Placing pre-order…"
+                : `Place pre-order · ${formatMoney(subtotalCents, currency)}`}
           </button>
           <p className="text-xs text-[var(--muted-foreground)] text-center">
-            We'll confirm your payment and get baking.
+            {preorderOpen
+              ? "We'll confirm your payment and bake for Sunday delivery."
+              : `The order form reopens ${reopensLabel}. Your cart is saved.`}
           </p>
+
         </form>
 
         <aside className="card-soft p-6 h-fit">
