@@ -103,11 +103,24 @@ function Checkout() {
             <label className="text-sm font-semibold">Notes (allergies, requests…)</label>
             <textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="input-field mt-1 resize-none" />
           </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--secondary)] p-4 mt-2">
+            <div className="text-xs uppercase tracking-widest text-[var(--muted-foreground)]">
+              Pay by bank transfer
+            </div>
+            <div className="mt-2 text-sm leading-relaxed">
+              <div><span className="font-semibold">Bank:</span> GTBank</div>
+              <div><span className="font-semibold">Account number:</span> 1034579657</div>
+              <div><span className="font-semibold">Account name:</span> Fatima Adam Yusuf</div>
+            </div>
+            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+              Transfer {formatMoney(subtotalCents, currency)} and use your name as the reference, then place your order below.
+            </p>
+          </div>
           <button disabled={submitting} className="btn-primary mt-2">
             {submitting ? "Placing order…" : `Place order · ${formatMoney(subtotalCents, currency)}`}
           </button>
           <p className="text-xs text-[var(--muted-foreground)] text-center">
-            You'll receive an email with payment instructions.
+            We'll confirm your payment and get baking.
           </p>
         </form>
 
