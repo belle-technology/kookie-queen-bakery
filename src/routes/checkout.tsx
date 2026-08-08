@@ -23,10 +23,15 @@ function Checkout() {
     notes: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const { open: preorderOpen, reopensLabel } = preorderStatus();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (items.length === 0) return;
+    if (!preorderOpen) {
+      toast.error(`Pre-orders are closed — the form reopens ${reopensLabel}.`);
+      return;
+    }
     setSubmitting(true);
 
     const { data: order, error } = await supabase
