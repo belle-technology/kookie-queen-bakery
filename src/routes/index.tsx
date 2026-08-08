@@ -7,6 +7,23 @@ import { ReviewWall } from "@/components/site/ReviewWall";
 
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Kookie Queen — Handmade Small-Batch Cookies" },
+      {
+        name: "description",
+        content:
+          "Shop handmade small-batch cookies from Kookie Queen. Baked fresh to order with real butter and delivered to your door.",
+      },
+      { property: "og:title", content: "Kookie Queen — Handmade Small-Batch Cookies" },
+      {
+        property: "og:description",
+        content: "Fresh, handmade cookies baked to order. Browse this week's cookie menu.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Home,
 });
 
