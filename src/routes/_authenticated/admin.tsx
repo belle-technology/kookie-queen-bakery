@@ -392,7 +392,7 @@ function ProductDialog({
           </div>
           <div>
             <label className="text-sm font-semibold">Category</label>
-            <input placeholder="Cookies, Cakes…" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="input-field mt-1" />
+            <input placeholder="Chocolate chip, Shortbread…" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="input-field mt-1" />
           </div>
         </div>
         <div className="flex gap-3 mt-6">

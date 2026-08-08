@@ -61,7 +61,7 @@ function Checkout() {
     }
 
     clear();
-    toast.success("Order placed! We'll be in touch.");
+    toast.success("Order placed! Send your transfer to GTBank 1034579657 (Fatima Adam Yusuf).");
     navigate({ to: "/", search: {} as never });
   }
 
