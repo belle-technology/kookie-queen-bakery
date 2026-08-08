@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProductCard, type ProductCardData } from "@/components/site/ProductCard";
 import { HeroShowcase, MediaGallery } from "@/components/site/HeroShowcase";
 import { ReviewWall } from "@/components/site/ReviewWall";
+import { PreorderBanner } from "@/components/site/PreorderBanner";
 
 
 export const Route = createFileRoute("/")({
