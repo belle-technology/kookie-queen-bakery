@@ -35,13 +35,7 @@ export function HeroShowcase() {
   return (
     <div className="absolute inset-0">
       {slides.length === 0 ? (
-        <img
-          src={heroImage}
-          alt=""
-          width={1600}
-          height={1000}
-          className="w-full h-full object-cover opacity-70"
-        />
+        <div className="w-full h-full bg-[var(--ink)]" />
       ) : (
         slides.map((s, i) => (
           <div
