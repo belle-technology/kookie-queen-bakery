@@ -68,16 +68,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Kookie Queen — Handmade cookies, cakes & bakes" },
+      { title: "Kookie Queen — Handmade small-batch cookies" },
       {
         name: "description",
         content:
-          "Kookie Queen bakes cookies, cakes, and everything sweet. Fresh, handmade, and shipped to your door.",
+          "Kookie Queen bakes handmade small-batch cookies with real butter. Fresh from our kitchen, delivered to your door.",
       },
-      { property: "og:title", content: "Kookie Queen — Handmade cookies, cakes & bakes" },
+      { property: "og:title", content: "Kookie Queen — Handmade small-batch cookies" },
       {
         property: "og:description",
-        content: "Fresh cookies, cakes, and baking treats. Order online at Kookie Queen.",
+        content: "Fresh, handmade cookies baked to order. Shop online at Kookie Queen.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -169,8 +169,14 @@ function Footer() {
             Kookie <span className="text-[var(--accent)]">Queen</span>
           </div>
           <p className="mt-2 text-sm text-[var(--cream)]/70 max-w-xs">
-            Handmade cookies, cakes, and baking treats — crafted with love, delivered fresh.
+            Handmade small-batch cookies — crafted with love, delivered fresh.
           </p>
+          <div className="mt-4 text-xs text-[var(--cream)]/60 leading-relaxed">
+            <div className="uppercase tracking-widest mb-1">Payments</div>
+            GTBank · 1034579657
+            <br />
+            Fatima Adam Yusuf
+          </div>
         </div>
         <div>
           <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-3">Shop</div>
