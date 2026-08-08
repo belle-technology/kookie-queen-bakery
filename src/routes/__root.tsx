@@ -68,16 +68,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Kookie Queen — Handmade cookies, cakes & bakes" },
+      { title: "Kookie Queen — Handmade small-batch cookies" },
       {
         name: "description",
         content:
-          "Kookie Queen bakes cookies, cakes, and everything sweet. Fresh, handmade, and shipped to your door.",
+          "Kookie Queen bakes handmade small-batch cookies with real butter. Fresh from our kitchen, delivered to your door.",
       },
-      { property: "og:title", content: "Kookie Queen — Handmade cookies, cakes & bakes" },
+      { property: "og:title", content: "Kookie Queen — Handmade small-batch cookies" },
       {
         property: "og:description",
-        content: "Fresh cookies, cakes, and baking treats. Order online at Kookie Queen.",
+        content: "Fresh, handmade cookies baked to order. Shop online at Kookie Queen.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
