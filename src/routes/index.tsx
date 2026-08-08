@@ -53,11 +53,11 @@ function Home() {
             Freshly baked
           </span>
           <h1 className="mt-4 font-display text-5xl sm:text-6xl md:text-7xl leading-[1.05] max-w-2xl">
-            Cookies, cakes &<br />
-            <span className="text-[var(--accent)]">everything sweet.</span>
+            Cookies, made<br />
+            <span className="text-[var(--accent)]">the queen's way.</span>
           </h1>
           <p className="mt-5 max-w-md text-[var(--cream)]/80 text-lg">
-            Small-batch bakes, handmade with real butter and a whole lot of love. Order today — we bake tomorrow.
+            Small-batch cookies, handmade with real butter and a whole lot of love. Order today — we bake tomorrow.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#shop" className="btn-pink">Shop the treats</a>
