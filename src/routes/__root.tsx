@@ -169,8 +169,14 @@ function Footer() {
             Kookie <span className="text-[var(--accent)]">Queen</span>
           </div>
           <p className="mt-2 text-sm text-[var(--cream)]/70 max-w-xs">
-            Handmade cookies, cakes, and baking treats — crafted with love, delivered fresh.
+            Handmade small-batch cookies — crafted with love, delivered fresh.
           </p>
+          <div className="mt-4 text-xs text-[var(--cream)]/60 leading-relaxed">
+            <div className="uppercase tracking-widest mb-1">Payments</div>
+            GTBank · 1034579657
+            <br />
+            Fatima Adam Yusuf
+          </div>
         </div>
         <div>
           <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-3">Shop</div>
