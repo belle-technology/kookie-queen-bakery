@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Pencil, Trash2, Plus, LogOut, ShoppingBag, Upload, Film, Image as ImageIcon } from "lucide-react";
+import { Pencil, Trash2, Plus, LogOut, ShoppingBag, Upload, Film, Check, Image as ImageIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/lib/cart-store";
 import { uploadMedia, isVideoFile } from "@/lib/media-upload";
@@ -43,6 +43,8 @@ type OrderRow = {
   currency: string;
   status: string;
   created_at: string;
+  tracking_code: string | null;
+  payment_confirmed_at: string | null;
 };
 
 
@@ -79,7 +81,7 @@ function AdminPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("id, customer_name, customer_email, total_cents, currency, status, created_at")
+        .select("id, customer_name, customer_email, total_cents, currency, status, created_at, tracking_code, payment_confirmed_at")
         .order("created_at", { ascending: false })
         .limit(20);
       if (error) throw error;
@@ -102,6 +104,21 @@ function AdminPage() {
     if (error) return toast.error(error.message);
     toast.success("Deleted");
     qc.invalidateQueries({ queryKey: ["admin", "products"] });
+  }
+
+  async function setOrderStatus(id: string, status: "pending" | "paid" | "fulfilled" | "cancelled") {
+    const { error } = await supabase.from("orders").update({ status }).eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success(
+      status === "paid"
+        ? "Payment confirmed — the customer can now see it"
+        : status === "fulfilled"
+          ? "Marked as delivered"
+          : status === "cancelled"
+            ? "Order cancelled"
+            : "Order set back to pending",
+    );
+    qc.invalidateQueries({ queryKey: ["admin", "orders"] });
   }
 
   async function quickStatus(id: string, status: ProductRow["status"]) {
