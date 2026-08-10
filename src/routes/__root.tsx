@@ -188,6 +188,7 @@ function Footer() {
         <div>
           <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-3">Kitchen</div>
           <div className="flex flex-col gap-2 text-sm">
+            <Link to="/track" search={{ code: undefined, email: undefined }} className="hover:text-[var(--accent)]">Track your order</Link>
             <a href="/#reviews" className="hover:text-[var(--accent)]">Customer reviews</a>
             <a href="/#story" className="hover:text-[var(--accent)]">Our story</a>
             <Link to="/auth" className="text-[var(--cream)]/40 hover:text-[var(--accent)]">
