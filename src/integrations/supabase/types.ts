@@ -65,9 +65,12 @@ export type Database = {
           customer_phone: string | null
           id: string
           notes: string | null
+          payment_confirmed_at: string | null
+          payment_reference: string | null
           shipping_address: string
           status: Database["public"]["Enums"]["order_status"]
           total_cents: number
+          tracking_code: string | null
         }
         Insert: {
           created_at?: string
@@ -77,9 +80,12 @@ export type Database = {
           customer_phone?: string | null
           id?: string
           notes?: string | null
+          payment_confirmed_at?: string | null
+          payment_reference?: string | null
           shipping_address: string
           status?: Database["public"]["Enums"]["order_status"]
           total_cents: number
+          tracking_code?: string | null
         }
         Update: {
           created_at?: string
@@ -89,9 +95,12 @@ export type Database = {
           customer_phone?: string | null
           id?: string
           notes?: string | null
+          payment_confirmed_at?: string | null
+          payment_reference?: string | null
           shipping_address?: string
           status?: Database["public"]["Enums"]["order_status"]
           total_cents?: number
+          tracking_code?: string | null
         }
         Relationships: []
       }
@@ -261,12 +270,41 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_order_status: {
+        Args: { p_email: string; p_tracking_code: string }
+        Returns: {
+          created_at: string
+          currency: string
+          customer_name: string
+          items: Json
+          payment_confirmed_at: string
+          status: Database["public"]["Enums"]["order_status"]
+          total_cents: number
+          tracking_code: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      place_order: {
+        Args: {
+          p_customer_email: string
+          p_customer_name: string
+          p_customer_phone: string
+          p_items: Json
+          p_notes: string
+          p_shipping_address: string
+        }
+        Returns: {
+          currency: string
+          order_id: string
+          total_cents: number
+          tracking_code: string
+        }[]
       }
     }
     Enums: {
