@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +11,6 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function Checkout() {
-  const navigate = useNavigate();
   const { items, clear } = useCart();
   const { subtotalCents, currency } = cartTotals(items);
 
@@ -38,9 +37,9 @@ function Checkout() {
     const { data, error } = await supabase.rpc("place_order", {
       p_customer_name: form.customer_name,
       p_customer_email: form.customer_email,
-      p_customer_phone: form.customer_phone || null,
+      p_customer_phone: form.customer_phone,
       p_shipping_address: form.shipping_address,
-      p_notes: form.notes || null,
+      p_notes: form.notes,
       p_items: items.map((i) => ({ product_id: i.productId, quantity: i.quantity })),
     });
 
