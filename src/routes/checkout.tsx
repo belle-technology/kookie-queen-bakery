@@ -23,6 +23,7 @@ function Checkout() {
     notes: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [placed, setPlaced] = useState<{ code: string; email: string; totalCents: number; currency: string } | null>(null);
   const { open: preorderOpen, reopensLabel } = preorderStatus();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -34,42 +35,64 @@ function Checkout() {
     }
     setSubmitting(true);
 
-    const { data: order, error } = await supabase
-      .from("orders")
-      .insert({
-        ...form,
-        customer_phone: form.customer_phone || null,
-        notes: form.notes || null,
-        total_cents: subtotalCents,
-        currency,
-      })
-      .select()
-      .single();
-
-    if (error || !order) {
-      setSubmitting(false);
-      toast.error(error?.message ?? "Could not place order");
-      return;
-    }
-
-    const itemRows = items.map((i) => ({
-      order_id: order.id,
-      product_id: i.productId,
-      product_name: i.name,
-      unit_price_cents: i.priceCents,
-      quantity: i.quantity,
-    }));
-    const { error: itemsError } = await supabase.from("order_items").insert(itemRows);
+    const { data, error } = await supabase.rpc("place_order", {
+      p_customer_name: form.customer_name,
+      p_customer_email: form.customer_email,
+      p_customer_phone: form.customer_phone || null,
+      p_shipping_address: form.shipping_address,
+      p_notes: form.notes || null,
+      p_items: items.map((i) => ({ product_id: i.productId, quantity: i.quantity })),
+    });
 
     setSubmitting(false);
-    if (itemsError) {
-      toast.error(itemsError.message);
+    const row = (data as unknown as { tracking_code: string; total_cents: number; currency: string }[] | null)?.[0];
+    if (error || !row) {
+      toast.error(error?.message ?? "Could not place your pre-order");
       return;
     }
 
     clear();
-    toast.success("Order placed! Send your transfer to GTBank 1034579657 (Fatima Adam Yusuf).");
-    navigate({ to: "/", search: {} as never });
+    setPlaced({
+      code: row.tracking_code,
+      email: form.customer_email.trim(),
+      totalCents: row.total_cents,
+      currency: row.currency,
+    });
+    toast.success("Pre-order received! Send your transfer to confirm it.");
+  }
+
+  if (placed) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-16">
+        <h1 className="font-display text-4xl">Pre-order received 🎉</h1>
+        <p className="text-[var(--muted-foreground)] mt-2">
+          Your order isn't confirmed until we receive and confirm your bank transfer. You'll see it update here.
+        </p>
+        <div className="card-soft p-6 mt-8">
+          <div className="text-xs uppercase tracking-widest text-[var(--muted-foreground)]">Your tracking code</div>
+          <div className="font-display text-3xl mt-1 tracking-widest">{placed.code}</div>
+          <div className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--secondary)] p-4 text-sm leading-relaxed">
+            <div><span className="font-semibold">Bank:</span> GTBank</div>
+            <div><span className="font-semibold">Account number:</span> 1034579657</div>
+            <div><span className="font-semibold">Account name:</span> Fatima Adam Yusuf</div>
+            <div className="mt-2">
+              <span className="font-semibold">Amount:</span> {formatMoney(placed.totalCents, placed.currency)}
+            </div>
+            <div><span className="font-semibold">Reference:</span> {placed.code}</div>
+          </div>
+          <div className="flex flex-wrap gap-3 mt-6">
+            <Link
+              to="/track"
+              search={{ code: placed.code, email: placed.email }}
+              className="btn-primary"
+            >
+              Track my order
+            </Link>
+            <Link to="/" className="btn-ghost">Back to shop</Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (items.length === 0) {
