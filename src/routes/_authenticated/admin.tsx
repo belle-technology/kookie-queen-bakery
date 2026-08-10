@@ -201,18 +201,52 @@ function AdminPage() {
       {/* Orders */}
 
       <section className="mt-12">
-        <h2 className="font-display text-2xl mb-4 flex items-center gap-2">
+        <h2 className="font-display text-2xl mb-2 flex items-center gap-2">
           <ShoppingBag size={20} /> Recent orders
         </h2>
+        <p className="text-sm text-[var(--muted-foreground)] mb-4">
+          Check your GTBank account, then mark payment as received — the customer sees the confirmation on their tracking page.
+        </p>
         <div className="card-soft overflow-hidden">
           {orders && orders.length > 0 ? (
             orders.map((o) => (
-              <div key={o.id} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_120px_120px_140px] gap-3 items-center px-4 py-4 border-b border-[var(--border)] last:border-b-0 text-sm">
-                <div className="font-semibold">{o.customer_name}</div>
-                <div className="text-[var(--muted-foreground)] truncate">{o.customer_email}</div>
-                <div>{formatMoney(o.total_cents, o.currency)}</div>
-                <div><span className="chip bg-[var(--secondary)] text-[var(--secondary-foreground)]">{o.status}</span></div>
-                <div className="text-[var(--muted-foreground)] text-xs">{new Date(o.created_at).toLocaleString()}</div>
+              <div key={o.id} className="px-4 py-4 border-b border-[var(--border)] last:border-b-0 text-sm grid gap-3 sm:grid-cols-[1fr_auto] items-center">
+                <div>
+                  <div className="font-semibold">
+                    {o.customer_name}{" "}
+                    <span className="font-mono text-xs text-[var(--muted-foreground)]">#{o.tracking_code}</span>
+                  </div>
+                  <div className="text-[var(--muted-foreground)] truncate">{o.customer_email}</div>
+                  <div className="text-xs text-[var(--muted-foreground)] mt-1">
+                    {formatMoney(o.total_cents, o.currency)} · {new Date(o.created_at).toLocaleString()}
+                    {o.payment_confirmed_at
+                      ? ` · payment confirmed ${new Date(o.payment_confirmed_at).toLocaleDateString()}`
+                      : ""}
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 justify-start sm:justify-end">
+                  <span className="chip bg-[var(--secondary)] text-[var(--secondary-foreground)]">{o.status}</span>
+                  {o.status === "pending" && (
+                    <button onClick={() => setOrderStatus(o.id, "paid")} className="btn-primary text-xs !py-1.5 !px-3">
+                      <Check size={14} /> Confirm payment
+                    </button>
+                  )}
+                  {o.status === "paid" && (
+                    <button onClick={() => setOrderStatus(o.id, "fulfilled")} className="btn-ghost text-xs !py-1.5 !px-3">
+                      Mark delivered
+                    </button>
+                  )}
+                  {o.status !== "cancelled" && o.status !== "fulfilled" && (
+                    <button onClick={() => setOrderStatus(o.id, "cancelled")} className="btn-ghost text-xs !py-1.5 !px-3 text-[var(--destructive)]">
+                      Cancel
+                    </button>
+                  )}
+                  {(o.status === "paid" || o.status === "cancelled") && (
+                    <button onClick={() => setOrderStatus(o.id, "pending")} className="btn-ghost text-xs !py-1.5 !px-3">
+                      Undo
+                    </button>
+                  )}
+                </div>
               </div>
             ))
           ) : (
