@@ -99,10 +99,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+// Runs before any app bundle: iOS Safari (Private Browsing / blocked cookies)
+// throws on *any* window.localStorage access, which crashed the whole app.
+const STORAGE_SHIM = `(function(){function m(){var d={};return{get length(){return Object.keys(d).length},clear:function(){d={}},getItem:function(k){return Object.prototype.hasOwnProperty.call(d,k)?d[k]:null},key:function(i){return Object.keys(d)[i]||null},removeItem:function(k){delete d[k]},setItem:function(k,v){d[k]=String(v)}}}
+["localStorage","sessionStorage"].forEach(function(k){try{var s=window[k];s.setItem("__kq__","1");s.removeItem("__kq__")}catch(e){try{Object.defineProperty(window,k,{configurable:true,value:m()})}catch(e2){}}})})();`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <script dangerouslySetInnerHTML={{ __html: STORAGE_SHIM }} />
         <HeadContent />
       </head>
       <body>
