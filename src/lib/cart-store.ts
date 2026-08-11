@@ -56,10 +56,38 @@ export const useCart = create<CartState>()(
     }),
     {
       name: "kookie-queen-cart",
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => safeStorage()),
     },
   ),
 );
+
+/**
+ * iOS Safari (Private Browsing, or with site data blocked) throws on any
+ * localStorage access. Fall back to an in-memory store so the app still runs.
+ */
+function safeStorage(): Storage {
+  try {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const probe = "__kq__";
+      window.localStorage.setItem(probe, "1");
+      window.localStorage.removeItem(probe);
+      return window.localStorage;
+    }
+  } catch {
+    /* storage unavailable */
+  }
+  const map = new Map<string, string>();
+  return {
+    get length() {
+      return map.size;
+    },
+    clear: () => map.clear(),
+    getItem: (k: string) => (map.has(k) ? map.get(k)! : null),
+    key: (i: number) => Array.from(map.keys())[i] ?? null,
+    removeItem: (k: string) => void map.delete(k),
+    setItem: (k: string, v: string) => void map.set(k, v),
+  } as Storage;
+}
 
 export function cartTotals(items: CartLine[]) {
   const count = items.reduce((s, i) => s + i.quantity, 0);
@@ -69,5 +97,12 @@ export function cartTotals(items: CartLine[]) {
 }
 
 export function formatMoney(cents: number, currency = "USD") {
-  return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(cents / 100);
+  const amount = (Number(cents) || 0) / 100;
+  const code = (currency || "USD").toUpperCase();
+  try {
+    return new Intl.NumberFormat(undefined, { style: "currency", currency: code }).format(amount);
+  } catch {
+    return `${code} ${amount.toFixed(2)}`;
+  }
 }
+
