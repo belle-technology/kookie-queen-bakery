@@ -45,7 +45,10 @@ type OrderRow = {
   created_at: string;
   tracking_code: string | null;
   payment_confirmed_at: string | null;
+  admin_note: string | null;
+  admin_note_updated_at: string | null;
 };
+
 
 
 function AdminPage() {
@@ -81,7 +84,7 @@ function AdminPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("id, customer_name, customer_email, total_cents, currency, status, created_at, tracking_code, payment_confirmed_at")
+        .select("id, customer_name, customer_email, total_cents, currency, status, created_at, tracking_code, payment_confirmed_at, admin_note, admin_note_updated_at")
         .order("created_at", { ascending: false })
         .limit(20);
       if (error) throw error;
@@ -120,6 +123,21 @@ function AdminPage() {
     );
     qc.invalidateQueries({ queryKey: ["admin", "orders"] });
   }
+  async function saveOrderNote(id: string, note: string): Promise<void> {
+    const trimmed = note.trim();
+    const { error } = await supabase
+      .from("orders")
+      .update({ admin_note: trimmed === "" ? null : trimmed })
+      .eq("id", id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    toast.success(trimmed === "" ? "Message removed" : "Message sent to the customer");
+    qc.invalidateQueries({ queryKey: ["admin", "orders"] });
+  }
+
 
   async function quickStatus(id: string, status: ProductRow["status"]) {
     const { error } = await supabase.from("products").update({ status }).eq("id", id);
@@ -264,7 +282,11 @@ function AdminPage() {
                     </button>
                   )}
                 </div>
+                <div className="sm:col-span-2">
+                  <OrderNoteEditor order={o} onSave={saveOrderNote} />
+                </div>
               </div>
+
             ))
           ) : (
             <div className="p-10 text-center text-[var(--muted-foreground)]">No orders yet.</div>
@@ -594,5 +616,69 @@ function MediaManager() {
         </div>
       )}
     </section>
+  );
+}
+
+function OrderNoteEditor({
+  order,
+  onSave,
+}: {
+  order: OrderRow;
+  onSave: (id: string, note: string) => Promise<void>;
+}) {
+  const [note, setNote] = useState(order.admin_note ?? "");
+  const [saving, setSaving] = useState(false);
+  const dirty = (order.admin_note ?? "") !== note;
+
+  useEffect(() => {
+    setNote(order.admin_note ?? "");
+  }, [order.admin_note]);
+
+  return (
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--secondary)] p-3">
+      <label className="text-xs uppercase tracking-widest text-[var(--muted-foreground)]">
+        Message to customer (shown on their tracking page)
+      </label>
+      <textarea
+        rows={2}
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="e.g. We couldn't find your transfer — please resend the receipt or use your code as the reference."
+        className="input-field mt-1 resize-none text-sm"
+      />
+      <div className="flex flex-wrap items-center gap-2 mt-2">
+        <button
+          type="button"
+          disabled={!dirty || saving}
+          onClick={async () => {
+            setSaving(true);
+            await onSave(order.id, note);
+            setSaving(false);
+          }}
+          className="btn-primary text-xs !py-1.5 !px-3 disabled:opacity-50"
+        >
+          {saving ? "Saving…" : "Send message"}
+        </button>
+        {order.admin_note && (
+          <button
+            type="button"
+            disabled={saving}
+            onClick={async () => {
+              setSaving(true);
+              await onSave(order.id, "");
+              setSaving(false);
+            }}
+            className="btn-ghost text-xs !py-1.5 !px-3"
+          >
+            Clear
+          </button>
+        )}
+        {order.admin_note_updated_at && (
+          <span className="text-xs text-[var(--muted-foreground)]">
+            Last updated {new Date(order.admin_note_updated_at).toLocaleString()}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }

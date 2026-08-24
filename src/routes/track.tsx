@@ -31,6 +31,8 @@ type OrderStatus = {
   currency: string;
   payment_confirmed_at: string | null;
   created_at: string;
+  admin_note: string | null;
+  admin_note_updated_at: string | null;
   items: { name: string; quantity: number; unit_price_cents: number }[];
 };
 
@@ -40,7 +42,7 @@ const STEPS: Record<string, { label: string; blurb: string }> = {
     blurb: "We've received your pre-order. Once we confirm your bank transfer, this page will update.",
   },
   paid: {
-    label: "Payment confirmed — baking for Sunday",
+    label: "Payment confirmed — your order is placed for Sunday",
     blurb: "Your payment has been confirmed and your order is locked in for Sunday delivery.",
   },
   fulfilled: {
@@ -52,6 +54,7 @@ const STEPS: Record<string, { label: string; blurb: string }> = {
     blurb: "This order was cancelled. Please reach out if you think that's a mistake.",
   },
 };
+
 
 function TrackPage() {
   const navigate = useNavigate();
@@ -139,7 +142,72 @@ function TrackPage() {
             </span>
           </div>
 
+          <ol className="mt-6 flex flex-col gap-3">
+            {[
+              {
+                title: "Pre-order received",
+                detail: `Placed ${new Date(order.created_at).toLocaleDateString()}`,
+                done: true,
+              },
+              {
+                title: "Payment confirmed",
+                detail: order.payment_confirmed_at
+                  ? `Confirmed ${new Date(order.payment_confirmed_at).toLocaleString()}`
+                  : "We're checking for your bank transfer.",
+                done: !!order.payment_confirmed_at,
+              },
+              {
+                title: "Order placed for Sunday delivery",
+                detail:
+                  order.status === "fulfilled"
+                    ? "Delivered — enjoy!"
+                    : order.payment_confirmed_at
+                      ? "You're on this Sunday's baking list."
+                      : "Confirmed as soon as your payment lands.",
+                done: order.status === "paid" || order.status === "fulfilled",
+              },
+              {
+                title: "Delivered",
+                detail: order.status === "fulfilled" ? "Thank you for ordering!" : "On delivery day.",
+                done: order.status === "fulfilled",
+              },
+            ].map((s) => (
+              <li key={s.title} className="flex gap-3 items-start">
+                <span
+                  className={`mt-0.5 h-5 w-5 shrink-0 rounded-full border flex items-center justify-center text-[10px] font-bold ${
+                    s.done
+                      ? "bg-[var(--accent)] border-[var(--accent)] text-[var(--ink)]"
+                      : "border-[var(--border)] text-[var(--muted-foreground)]"
+                  }`}
+                >
+                  {s.done ? "✓" : ""}
+                </span>
+                <div>
+                  <div className={`text-sm font-semibold ${s.done ? "" : "text-[var(--muted-foreground)]"}`}>
+                    {s.title}
+                  </div>
+                  <div className="text-xs text-[var(--muted-foreground)]">{s.detail}</div>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          {order.admin_note && (
+            <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--secondary)] p-4">
+              <div className="text-xs uppercase tracking-widest text-[var(--muted-foreground)]">
+                Message from Kookie Queen
+              </div>
+              <p className="mt-2 text-sm leading-relaxed whitespace-pre-line">{order.admin_note}</p>
+              {order.admin_note_updated_at && (
+                <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+                  {new Date(order.admin_note_updated_at).toLocaleString()}
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="border-t border-[var(--border)] my-5" />
+
           <div className="flex flex-col gap-2 text-sm">
             {order.items.map((i, idx) => (
               <div key={idx} className="flex gap-3">
