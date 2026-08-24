@@ -123,7 +123,7 @@ function AdminPage() {
     );
     qc.invalidateQueries({ queryKey: ["admin", "orders"] });
   }
-  async function saveOrderNote(id: string, note: string) {
+  async function saveOrderNote(id: string, note: string): Promise<void> {
     const trimmed = note.trim();
     const { error } = await supabase
       .from("orders")
