@@ -123,6 +123,17 @@ function AdminPage() {
     );
     qc.invalidateQueries({ queryKey: ["admin", "orders"] });
   }
+  async function saveOrderNote(id: string, note: string) {
+    const trimmed = note.trim();
+    const { error } = await supabase
+      .from("orders")
+      .update({ admin_note: trimmed === "" ? null : trimmed })
+      .eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success(trimmed === "" ? "Message removed" : "Message sent to the customer");
+    qc.invalidateQueries({ queryKey: ["admin", "orders"] });
+  }
+
 
   async function quickStatus(id: string, status: ProductRow["status"]) {
     const { error } = await supabase.from("products").update({ status }).eq("id", id);
