@@ -129,7 +129,11 @@ function AdminPage() {
       .from("orders")
       .update({ admin_note: trimmed === "" ? null : trimmed })
       .eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
     toast.success(trimmed === "" ? "Message removed" : "Message sent to the customer");
     qc.invalidateQueries({ queryKey: ["admin", "orders"] });
   }
