@@ -278,7 +278,11 @@ function AdminPage() {
                     </button>
                   )}
                 </div>
+                <div className="sm:col-span-2">
+                  <OrderNoteEditor order={o} onSave={saveOrderNote} />
+                </div>
               </div>
+
             ))
           ) : (
             <div className="p-10 text-center text-[var(--muted-foreground)]">No orders yet.</div>
