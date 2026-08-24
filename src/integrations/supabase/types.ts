@@ -58,6 +58,8 @@ export type Database = {
       }
       orders: {
         Row: {
+          admin_note: string | null
+          admin_note_updated_at: string | null
           created_at: string
           currency: string
           customer_email: string
@@ -73,6 +75,8 @@ export type Database = {
           tracking_code: string | null
         }
         Insert: {
+          admin_note?: string | null
+          admin_note_updated_at?: string | null
           created_at?: string
           currency?: string
           customer_email: string
@@ -88,6 +92,8 @@ export type Database = {
           tracking_code?: string | null
         }
         Update: {
+          admin_note?: string | null
+          admin_note_updated_at?: string | null
           created_at?: string
           currency?: string
           customer_email?: string
@@ -273,6 +279,8 @@ export type Database = {
       get_order_status: {
         Args: { p_email: string; p_tracking_code: string }
         Returns: {
+          admin_note: string
+          admin_note_updated_at: string
           created_at: string
           currency: string
           customer_name: string
