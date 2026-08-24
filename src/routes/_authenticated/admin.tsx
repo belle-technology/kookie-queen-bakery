@@ -45,7 +45,10 @@ type OrderRow = {
   created_at: string;
   tracking_code: string | null;
   payment_confirmed_at: string | null;
+  admin_note: string | null;
+  admin_note_updated_at: string | null;
 };
+
 
 
 function AdminPage() {
