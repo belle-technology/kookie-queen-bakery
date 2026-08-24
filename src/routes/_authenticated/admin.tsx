@@ -84,7 +84,7 @@ function AdminPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("id, customer_name, customer_email, total_cents, currency, status, created_at, tracking_code, payment_confirmed_at")
+        .select("id, customer_name, customer_email, total_cents, currency, status, created_at, tracking_code, payment_confirmed_at, admin_note, admin_note_updated_at")
         .order("created_at", { ascending: false })
         .limit(20);
       if (error) throw error;
