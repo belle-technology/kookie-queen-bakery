@@ -31,6 +31,8 @@ type OrderStatus = {
   currency: string;
   payment_confirmed_at: string | null;
   created_at: string;
+  admin_note: string | null;
+  admin_note_updated_at: string | null;
   items: { name: string; quantity: number; unit_price_cents: number }[];
 };
 
@@ -40,7 +42,7 @@ const STEPS: Record<string, { label: string; blurb: string }> = {
     blurb: "We've received your pre-order. Once we confirm your bank transfer, this page will update.",
   },
   paid: {
-    label: "Payment confirmed — baking for Sunday",
+    label: "Payment confirmed — your order is placed for Sunday",
     blurb: "Your payment has been confirmed and your order is locked in for Sunday delivery.",
   },
   fulfilled: {
@@ -52,6 +54,7 @@ const STEPS: Record<string, { label: string; blurb: string }> = {
     blurb: "This order was cancelled. Please reach out if you think that's a mistake.",
   },
 };
+
 
 function TrackPage() {
   const navigate = useNavigate();
